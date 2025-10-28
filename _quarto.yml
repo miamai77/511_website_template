@@ -11,6 +11,6 @@ website:
 
 format:
   html:
-    theme: cyborg
+    theme: cosmo
     includes:
         after_body: include/after_body.html
