@@ -124,7 +124,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -259,36 +259,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>total_demographic <span class="ot">&lt;-</span> <span class="fu">left_join</span>(socioec, religion2020, <span class="at">by=</span><span class="fu">join_by</span>(TL_GEO_ID<span class="sc">==</span>FIPS))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I then join both of these dataframes together to create a single, conjoined dataframe. I use FIPS codes as the join key, present in both dataframes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>counties <span class="ot">&lt;-</span> <span class="fu">counties</span>(<span class="at">cb=</span><span class="cn">TRUE</span>, <span class="at">year=</span><span class="dv">2021</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>HTTP download failed, trying FTP as fallback...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>demog_geom <span class="ot">&lt;-</span> <span class="fu">left_join</span>(counties, total_demographic, <span class="at">by=</span><span class="fu">join_by</span>(AFFGEOID<span class="sc">==</span>GEO_ID))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Then, I take a counties dataframe using census bureau TIGER files, in order to obtain geographic boundaries for counties. This should make plotting easier.</p>
 <p>So, now I have my demographic baseline data. My next step is to gather survey data from Pew and the PRRI and predict right wing authoritarianism by county based on these variables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(demog_geom, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">fill=</span>EVANRATE_2020)) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">125</span>, <span class="sc">-</span><span class="dv">65</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">23</span>, <span class="dv">50</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradient2</span>(<span class="at">low=</span><span class="st">"white"</span>, <span class="at">high=</span><span class="st">"red"</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">80</span>), <span class="at">oob =</span> scales<span class="sc">::</span>squish) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Evangelical Protestant Adherence Rate by County"</span>, <span class="at">fill=</span><span class="st">"Adherents per 1000 pop."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(demog_geom, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">fill=</span>EVANRATE_2020)) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">125</span>, <span class="sc">-</span><span class="dv">65</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">23</span>, <span class="dv">50</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradient2</span>(<span class="at">low=</span><span class="st">"white"</span>, <span class="at">high=</span><span class="st">"red"</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">80</span>), <span class="at">oob =</span> scales<span class="sc">::</span>squish) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Evangelical Protestant Adherence Rate by County"</span>, <span class="at">fill=</span><span class="st">"Adherents per 1000 pop."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="maines_511_draft1_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="576"></p>
 <figcaption>Plot of Evangelical Protestant Population</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(demog_geom, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">fill=</span>LDSRATE_2020)) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">125</span>, <span class="sc">-</span><span class="dv">65</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">23</span>, <span class="dv">50</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradient2</span>(<span class="at">low=</span><span class="st">"white"</span>, <span class="at">high=</span><span class="st">"purple"</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">80</span>), <span class="at">oob =</span> scales<span class="sc">::</span>squish) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Latter Day Saints Adherence Rate by County"</span>, <span class="at">fill=</span><span class="st">"Adherents per 1000 pop."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(demog_geom, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">fill=</span>LDSRATE_2020)) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">125</span>, <span class="sc">-</span><span class="dv">65</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">23</span>, <span class="dv">50</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradient2</span>(<span class="at">low=</span><span class="st">"white"</span>, <span class="at">high=</span><span class="st">"purple"</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">80</span>), <span class="at">oob =</span> scales<span class="sc">::</span>squish) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Latter Day Saints Adherence Rate by County"</span>, <span class="at">fill=</span><span class="st">"Adherents per 1000 pop."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="maines_511_draft1_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="576"></p>
 <figcaption>Plot of Mormon Population</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(demog_geom, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">fill=</span>BPRTRATE_2020)) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">125</span>, <span class="sc">-</span><span class="dv">65</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">23</span>, <span class="dv">50</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradient2</span>(<span class="at">low=</span><span class="st">"white"</span>, <span class="at">high=</span><span class="st">"blue"</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">oob =</span> scales<span class="sc">::</span>squish) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Black Protestant Adherence Rate by County"</span>, <span class="at">fill=</span><span class="st">"Adherents per 1000 pop."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(demog_geom, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">fill=</span>BPRTRATE_2020)) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">125</span>, <span class="sc">-</span><span class="dv">65</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">23</span>, <span class="dv">50</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradient2</span>(<span class="at">low=</span><span class="st">"white"</span>, <span class="at">high=</span><span class="st">"blue"</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">oob =</span> scales<span class="sc">::</span>squish) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Black Protestant Adherence Rate by County"</span>, <span class="at">fill=</span><span class="st">"Adherents per 1000 pop."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="maines_511_draft1_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="576"></p>
 <figcaption>Plot of Black Protestant Population</figcaption>
 </figure>
 </div>

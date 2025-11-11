@@ -132,7 +132,7 @@ total_demographic <- left_join(socioec, religion2020, by=join_by(TL_GEO_ID==FIPS
 
 I then join both of these dataframes together to create a single, conjoined dataframe. I use FIPS codes as the join key, present in both dataframes.
 
-```{r}
+```{r, echo = FALSE, results = 'hide', message=FALSE}
 counties <- counties(cb=TRUE, year=2021)
 demog_geom <- left_join(counties, total_demographic, by=join_by(AFFGEOID==GEO_ID))
 ```
@@ -140,15 +140,15 @@ Then, I take a counties dataframe using census bureau TIGER files, in order to o
 
 So, now I have my demographic baseline data. My next step is to gather survey data from Pew and the PRRI and predict right wing authoritarianism by county based on these variables.
 
-```{r, fig.width=6, fig.height=3, fig.cap="Plot of Evangelical Protestant Population"}
+```{r, fig.width=12, fig.height=6, fig.cap="Plot of Evangelical Protestant Population"}
 ggplot() + geom_sf(demog_geom, mapping=aes(fill=EVANRATE_2020)) + xlim(-125, -65) + ylim(23, 50) + scale_fill_gradient2(low="white", high="red", limits = c(0, 80), oob = scales::squish) + labs(title="Evangelical Protestant Adherence Rate by County", fill="Adherents per 1000 pop.")
 ```
 
-```{r, fig.width=6, fig.height=3, fig.cap="Plot of Mormon Population"}
+```{r, fig.width=12, fig.height=6, fig.cap="Plot of Mormon Population"}
 ggplot() + geom_sf(demog_geom, mapping=aes(fill=LDSRATE_2020)) + xlim(-125, -65) + ylim(23, 50) + scale_fill_gradient2(low="white", high="purple", limits = c(0, 80), oob = scales::squish) + labs(title="Latter Day Saints Adherence Rate by County", fill="Adherents per 1000 pop.")
 ```
 
-```{r, fig.width=6, fig.height=3, fig.cap="Plot of Black Protestant Population"}
+```{r, fig.width=12, fig.height=6, fig.cap="Plot of Black Protestant Population"}
 ggplot() + geom_sf(demog_geom, mapping=aes(fill=BPRTRATE_2020)) + xlim(-125, -65) + ylim(23, 50) + scale_fill_gradient2(low="white", high="blue", limits = c(0, 30), oob = scales::squish) + labs(title="Black Protestant Adherence Rate by County", fill="Adherents per 1000 pop.")
 ```
 
