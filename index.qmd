@@ -17,33 +17,6 @@ Perhaps class is a primary predictor of RWA, or urban-rural location, or perhaps
 Firstly, we examine existing survey data pertaining to right-wing authoritarianism in the United States. There are two primary surveyors I've found to have information pertaining to RWA-adjacent values: Gallup and the Public Religion Research Institute.
 I take state-by-state and metro-by-metro information on RWA from these sources, and model them from Census Data pertaining to socioeconomic factors, as well as religion data from each county.
 
-Code: The code associated with the project is well organized and easy to follow. Demonstrates mastery of R graphics and functions.
-
-Data: The underlying data are publicly accessible via the web and downloaded/accessed within the Rmd script. If you want to use your own data, you must make it available on a website (e.g. Figshare) so that others are able to re-run your code.
-
-You can do bullets like this:
-
--   The first most important thing
--   The second most important thing
--   The third most important thing
-
-You can do numbers like this:
-
-1.  The first most important thing
-2.  The second most important thing
-3.  The third most important thing
-
-See <http://rmarkdown.rstudio.com/> for all the amazing things you can do.
-
-Here's my first code chunk.
-
-```{r}
-
-```
-
-
-Load any required packages in a code chunk (you may need to install some packages):
-
 ```{r, message=F, warning=F}
 library(tidyverse)
 library(leaflet)
@@ -55,8 +28,6 @@ library(tidyr)
 library(tigris)
 library(ggplot2)
 library(sf)
-knitr::opts_chunk$set(widgetframe_widgets_dir = 'widgets' ) 
-knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
 
 ## Loading data
