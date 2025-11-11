@@ -121,6 +121,7 @@ religion2020 <- read.csv("data/religion2020.csv")
 religion2020[is.na(religion2020)] <- 0
 religion2020 <- religion2020 |>
   mutate(TOTJUDRATE_2020 = CJUDRATE_2020 + IJUDRATE_2020 + OJUDRATE_2020 + RJUDRATE_2020 + RFRMRATE_2020, TOTBUDRATE_2020 = MAHBUDRATE_2020 + THBUDRATE_2020 + VAJBUDRATE_2020)
+kable(head(religion2020))
 ```
 
 I also process the religion data by taking NA adherence rate values and converting them to 0.
