@@ -91,7 +91,7 @@ Because raw numbers were given in the spreadsheet for each demographic, I had to
 
 ```{r}
 socioec <- read.csv("data/511_socioeconomic.csv")
-
+kable(head(socioec))
 ```
 
 The US Religion Census is an organization that tracks religious affiliation across the country. They perform an exhaustive census of every religious organization in the United States to get detailed affiliation data.
