@@ -38,10 +38,9 @@ See <http://rmarkdown.rstudio.com/> for all the amazing things you can do.
 Here's my first code chunk.
 
 ```{r}
-x=3+4
+
 ```
 
-Refer to output in your narrative like this: x=`r x` .
 
 Load any required packages in a code chunk (you may need to install some packages):
 
@@ -51,32 +50,108 @@ library(leaflet)
 library(kableExtra)
 library(htmlwidgets)
 library(widgetframe)
+library(ipumsr)
+library(tidyr)
+library(tigris)
+library(ggplot2)
+library(sf)
 knitr::opts_chunk$set(widgetframe_widgets_dir = 'widgets' ) 
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
 
-## Download and clean all required data
+## Loading data
+
+IPUMS is an organization that collects and processes survey and census data from around the world.
+
+Their **National Historical Geographic Information System** (NHGIS) takes historic US census data and cleans it to make it easily GIS-joinable.
+
+Upon the creation of an account, one has free access to all their data. However, after ample research, I didn't find a way to directly data-download from their website into the R workspace. Thus, I had to do it manually.
+
+I did some initial cleaning of the data in excel. If this is not permissible in the final project, I will fix this.
+
+I began by downloading information on race, education, income, poverty, age, and urban/rural status for all counties in the United States. I used the 2023 American Community survey for all topics except urban/rural status, for which only 2020 was available. Connecticut recently changed its counties into "planning regions" so there is discontinuity from 2021 onward that will hinder joining to religion data later on. So for Connecticut, I used the 2021 ACS.
+
+The following tables were downloaded:
+-   B01002: Median Age by Sex (2019-2023 ACS)
+-   B03002: Hispanic or Latino Origin by Race (2019-2023 ACS)
+-   B15003: Educational Attainment for the Population 25 and Older (2019-2023 ACS)
+-   B19013: Median Household Income in the Past 12 Months (2019-2023 ACS)
+-   C17002: Ratio of Income to Poverty Level in the Past 12 Months (2019-2023 ACS)
+-   P2: Urban and Rural (2020 Decennial Census)
+
+Because each sheet had the same number of columns (all counties were organized in the same way), they could easily just be copy-and-pasted into one giant sheet with no problems.
+
+Because raw numbers were given in the spreadsheet for each demographic, I had to convert them all into proportions of the total population. Final column values represent:
+-   Total median age
+-   Percentage of total population that is White, Black, Asian, Native American, Pacific Islander, Other Race, Multiracial, and Hispanic
+-   Percentage of those 25 and older who have: received no schooling, been educated up to middle school, high school but no diploma, high school diploma, associate's degree, bachelor's degree, post-bachelor's degree
+-   Percentage of households with incomes: Below 15K, 15-30K, 30-60K, 60-100K, 100-150K, 150-200K, and Over 200K
+-   Percentage of people with incomes: below half of the poverty line, and 50-100% of the poverty line
+-   Percentage of the population in urbanized areas
 
 ```{r}
-n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))
+socioec <- read.csv("data/511_socioeconomic.csv")
+
 ```
 
-```{r, results='asis'}
-data %>% 
-  slice(1:10) %>% #show only 1:n rows
-  kable(digits=2,align="c")%>% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c("striped", "hover", "condensed", "responsive")) #apply other formatting
+The US Religion Census is an organization that tracks religious affiliation across the country. They perform an exhaustive census of every religious organization in the United States to get detailed affiliation data.
+
+There is an API available through OSF in order to download this data, but as of writing the first draft, it appears to be broken. I cannot seem to be able to create an OSF account currently. I do plan on using the API in my final project, but as of now we will just have to make do.
+
+Since the religion census lists affiliation with every single religious organization in the country, the file is very large. I cannot load it directly into the data folder, so I created an abridged version in excel with only the sects I intended on analyzing. These include:
+
+-   Total Adherence Rate of All Religious Organizations (TOT)
+-   Evangelical Protestant (EVAN)
+-   Black Protestant (BPRT)
+-   Mainline Protestant (MPRT)
+-   Catholic (CATH)
+-   Orthodox Christian (ORTH)
+-   Mormonism/Latter Day Saints (LDS)
+-   Judaism (CJUD - Conservative, IJUD - Independent, OJUD - Orthodox, RJUD - Reconstructionist, RFRM - Reform)
+-   Islam (MSLM)
+-   Hinduism (HINT)
+-   Buddhism (MAHBUD - Mahayana, THBUD - Theravada, VAJBUD - Vajarayana)
+
+The Religion Census finds total adherence rates for Christian denominations (e.g. Evangelical Protestant is not a single organization but rather many with similar characteristics)
+
+For smaller religions (Mormonism, Judaism, Islam, Hinduism, Buddhism), I had to manually search through the hundreds of congregations to find these specific groups. There are separate columns for Jewish and Buddhist denominations, but I am combining them, as they are quite small religions.
+
+```{r}
+religion2020 <- read.csv("data/religion2020.csv")
+religion2020[is.na(religion2020)] <- 0
+religion2020 <- religion2020 |>
+  mutate(TOTJUDRATE_2020 = CJUDRATE_2020 + IJUDRATE_2020 + OJUDRATE_2020 + RJUDRATE_2020 + RFRMRATE_2020, TOTBUDRATE_2020 = MAHBUDRATE_2020 + THBUDRATE_2020 + VAJBUDRATE_2020)
 ```
 
-Add any additional processing steps here.
+I also process the religion data by taking NA adherence rate values and converting them to 0.
+In these cases, it means that there is a negligent amount of congregations of a given sect in a given county, and thus there are not a significant number of adherents.
+
+```{r}
+total_demographic <- left_join(socioec, religion2020, by=join_by(TL_GEO_ID==FIPS))
+```
+
+I then join both of these dataframes together to create a single, conjoined dataframe. I use FIPS codes as the join key, present in both dataframes.
+
+```{r}
+counties <- counties(cb=TRUE, year=2021)
+demog_geom <- left_join(counties, total_demographic, by=join_by(AFFGEOID==GEO_ID))
+```
+Then, I take a counties dataframe using census bureau TIGER files, in order to obtain geographic boundaries for counties. This should make plotting easier.
+
+So, now I have my demographic baseline data. My next step is to gather survey data from Pew and the PRRI and predict right wing authoritarianism by county based on these variables.
+
+```{r, fig.width=6, fig.height=3, fig.cap="Plot of Evangelical Protestant Population"}
+ggplot() + geom_sf(demog_geom, mapping=aes(fill=EVANRATE_2020)) + xlim(-125, -65) + ylim(23, 50) + scale_fill_gradient2(low="white", high="red", limits = c(0, 80), oob = scales::squish) + labs(title="Evangelical Protestant Adherence Rate by County", fill="Adherents per 1000 pop.")
+```
+
+```{r, fig.width=6, fig.height=3, fig.cap="Plot of Mormon Population"}
+ggplot() + geom_sf(demog_geom, mapping=aes(fill=LDSRATE_2020)) + xlim(-125, -65) + ylim(23, 50) + scale_fill_gradient2(low="white", high="purple", limits = c(0, 80), oob = scales::squish) + labs(title="Latter Day Saints Adherence Rate by County", fill="Adherents per 1000 pop.")
+```
+
+```{r, fig.width=6, fig.height=3, fig.cap="Plot of Black Protestant Population"}
+ggplot() + geom_sf(demog_geom, mapping=aes(fill=BPRTRATE_2020)) + xlim(-125, -65) + ylim(23, 50) + scale_fill_gradient2(low="white", high="blue", limits = c(0, 30), oob = scales::squish) + labs(title="Black Protestant Adherence Rate by County", fill="Adherents per 1000 pop.")
+```
+
 
 # Results
 
@@ -87,25 +162,17 @@ Tables and figures (maps and other graphics) are carefully planned to convey the
 Show tables, plots, etc. and describe them.
 
 ```{r, fig.width=6, fig.height=3, fig.cap="Map of completely random data"}
-m <- leaflet(data) %>% 
-  addTiles() %>% 
-  addCircleMarkers(~x, ~y, radius = ~size,color = ~as.factor(category)) %>% 
-  addPopups(~x[2], ~y[2], "Random popup")
-m  # a map with the default OSM tile layer
+
 ```
 
 ```{r}
-data %>% 
-  ggplot(aes(x=x,y=y,col=category))+
-  geom_point()
+
 ```
 
 ### Dygraphs Example
 
 ```{r}
-library(dygraphs)
-dygraph(nhtemp, main = "New Haven Temperatures") |> 
-  dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01")) 
+
 ```
 
 # Conclusions
