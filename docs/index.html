@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Mia Maines">
-<meta name="dcterms.date" content="2025-11-10">
+<meta name="dcterms.date" content="2025-11-11">
 
 <title>Estimating Right-Wing Authoritarianism Values for United States Counties – GEO511 Final Project - Mia Maines</title>
 <style>
@@ -166,7 +166,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 10, 2025</p>
+      <p class="date">November 11, 2025</p>
     </div>
   </div>
   
@@ -260,7 +260,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>I then join both of these dataframes together to create a single, conjoined dataframe. I use FIPS codes as the join key, present in both dataframes.</p>
 <p>Then, I take a counties dataframe using census bureau TIGER files, in order to obtain geographic boundaries for counties. This should make plotting easier.</p>
-<p>So, now I have my demographic baseline data. My next step is to gather survey data from Pew and the PRRI and predict right wing authoritarianism by county based on these variables.</p>
+<p>So, now I have my demographic baseline data. My next step is to gather survey data from Pew and the PRRI, and predict right wing authoritarianism by county based on these variables.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(demog_geom, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">fill=</span>EVANRATE_2020)) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">125</span>, <span class="sc">-</span><span class="dv">65</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">23</span>, <span class="dv">50</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradient2</span>(<span class="at">low=</span><span class="st">"white"</span>, <span class="at">high=</span><span class="st">"red"</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">80</span>), <span class="at">oob =</span> scales<span class="sc">::</span>squish) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Evangelical Protestant Adherence Rate by County"</span>, <span class="at">fill=</span><span class="st">"Adherents per 1000 pop."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">

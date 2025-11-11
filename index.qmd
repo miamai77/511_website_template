@@ -138,7 +138,7 @@ demog_geom <- left_join(counties, total_demographic, by=join_by(AFFGEOID==GEO_ID
 ```
 Then, I take a counties dataframe using census bureau TIGER files, in order to obtain geographic boundaries for counties. This should make plotting easier.
 
-So, now I have my demographic baseline data. My next step is to gather survey data from Pew and the PRRI and predict right wing authoritarianism by county based on these variables.
+So, now I have my demographic baseline data. My next step is to gather survey data from Pew and the PRRI, and predict right wing authoritarianism by county based on these variables.
 
 ```{r, fig.width=12, fig.height=6, fig.cap="Plot of Evangelical Protestant Population"}
 ggplot() + geom_sf(demog_geom, mapping=aes(fill=EVANRATE_2020)) + xlim(-125, -65) + ylim(23, 50) + scale_fill_gradient2(low="white", high="red", limits = c(0, 80), oob = scales::squish) + labs(title="Evangelical Protestant Adherence Rate by County", fill="Adherents per 1000 pop.")
