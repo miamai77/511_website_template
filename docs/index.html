@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Mia Maines">
-<meta name="dcterms.date" content="2025-11-11">
+<meta name="dcterms.date" content="2025-11-24">
 
 <title>Estimating Right-Wing Authoritarianism Values for United States Counties – GEO511 Final Project - Mia Maines</title>
 <style>
@@ -166,7 +166,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 11, 2025</p>
+      <p class="date">November 24, 2025</p>
     </div>
   </div>
   
@@ -186,23 +186,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="materials-and-methods" class="level1">
 <h1>Materials and methods</h1>
 <p>Firstly, we examine existing survey data pertaining to right-wing authoritarianism in the United States. There are two primary surveyors I’ve found to have information pertaining to RWA-adjacent values: Gallup and the Public Religion Research Institute. I take state-by-state and metro-by-metro information on RWA from these sources, and model them from Census Data pertaining to socioeconomic factors, as well as religion data from each county.</p>
-<p>Code: The code associated with the project is well organized and easy to follow. Demonstrates mastery of R graphics and functions.</p>
-<p>Data: The underlying data are publicly accessible via the web and downloaded/accessed within the Rmd script. If you want to use your own data, you must make it available on a website (e.g.&nbsp;Figshare) so that others are able to re-run your code.</p>
-<p>You can do bullets like this:</p>
-<ul>
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ul>
-<p>You can do numbers like this:</p>
-<ol type="1">
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ol>
-<p>See <a href="http://rmarkdown.rstudio.com/" class="uri">http://rmarkdown.rstudio.com/</a> for all the amazing things you can do.</p>
-<p>Here’s my first code chunk.</p>
-<p>Load any required packages in a code chunk (you may need to install some packages):</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leaflet)</span>
@@ -213,9 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tigris)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">widgetframe_widgets_dir =</span> <span class="st">'widgets'</span> ) </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">cache=</span><span class="cn">TRUE</span>)  <span class="co"># cache the results for quick compiling</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="loading-data" class="level2">
 <h2 class="anchored" data-anchor-id="loading-data">Loading data</h2>
@@ -228,7 +209,336 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Because each sheet had the same number of columns (all counties were organized in the same way), they could easily just be copy-and-pasted into one giant sheet with no problems.</p>
 <p>Because raw numbers were given in the spreadsheet for each demographic, I had to convert them all into proportions of the total population. Final column values represent: - Total median age - Percentage of total population that is White, Black, Asian, Native American, Pacific Islander, Other Race, Multiracial, and Hispanic - Percentage of those 25 and older who have: received no schooling, been educated up to middle school, high school but no diploma, high school diploma, associate’s degree, bachelor’s degree, post-bachelor’s degree - Percentage of households with incomes: Below 15K, 15-30K, 30-60K, 60-100K, 100-150K, 150-200K, and Over 200K - Percentage of people with incomes: below half of the poverty line, and 50-100% of the poverty line - Percentage of the population in urbanized areas</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>socioec <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/511_socioeconomic.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>socioec <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/511_socioeconomic.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(socioec))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 1%">
+<col style="width: 2%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 1%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 5%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 1%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">GISJOIN</th>
+<th style="text-align: left;">YEAR</th>
+<th style="text-align: left;">STUSAB</th>
+<th style="text-align: left;">STATE</th>
+<th style="text-align: right;">STATEA</th>
+<th style="text-align: right;">COUNTYA</th>
+<th style="text-align: left;">GEO_ID</th>
+<th style="text-align: right;">TL_GEO_ID</th>
+<th style="text-align: left;">NAME_E</th>
+<th style="text-align: right;">Median_Age</th>
+<th style="text-align: right;">Total_POP</th>
+<th style="text-align: right;">Pct_White</th>
+<th style="text-align: right;">Pct_Black</th>
+<th style="text-align: right;">Pct_Indigenous</th>
+<th style="text-align: right;">Pct_Asian</th>
+<th style="text-align: right;">Pct_PI</th>
+<th style="text-align: right;">Pct_OtherRace</th>
+<th style="text-align: right;">Pct_MixedRace</th>
+<th style="text-align: right;">Pct_Hispanic</th>
+<th style="text-align: right;">Total_Over25</th>
+<th style="text-align: right;">Pct_NoSchool</th>
+<th style="text-align: right;">Pct_JuniorSchool</th>
+<th style="text-align: right;">Pct_HS_NoDiploma</th>
+<th style="text-align: right;">Pct_HS</th>
+<th style="text-align: right;">Pct_SomeCollege</th>
+<th style="text-align: right;">Pct_Bachelor</th>
+<th style="text-align: right;">Pct_PostBachelor</th>
+<th style="text-align: right;">Total_Households</th>
+<th style="text-align: right;">Pct_Under15K</th>
+<th style="text-align: right;">Pct_under30k</th>
+<th style="text-align: right;">Pct_under60k</th>
+<th style="text-align: right;">Pct_under100k</th>
+<th style="text-align: right;">Pct_under150k</th>
+<th style="text-align: right;">Pct_under200k</th>
+<th style="text-align: right;">Pct_over200k</th>
+<th style="text-align: right;">Pct_halfPoverty</th>
+<th style="text-align: right;">Pct_Poverty</th>
+<th style="text-align: right;">URBAN</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">G0100010</td>
+<td style="text-align: left;">2019-2023</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: left;">Alabama</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">0500000US01001</td>
+<td style="text-align: right;">1001</td>
+<td style="text-align: left;">Autauga County, Alabama</td>
+<td style="text-align: right;">39.2</td>
+<td style="text-align: right;">59285</td>
+<td style="text-align: right;">71.68255</td>
+<td style="text-align: right;">19.952770</td>
+<td style="text-align: right;">0.0708442</td>
+<td style="text-align: right;">1.0103736</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">0.3677153</td>
+<td style="text-align: right;">3.225099</td>
+<td style="text-align: right;">3.690647</td>
+<td style="text-align: right;">40767</td>
+<td style="text-align: right;">0.6598474</td>
+<td style="text-align: right;">0.8143842</td>
+<td style="text-align: right;">8.246866</td>
+<td style="text-align: right;">32.67594</td>
+<td style="text-align: right;">29.32028</td>
+<td style="text-align: right;">15.988422</td>
+<td style="text-align: right;">12.294258</td>
+<td style="text-align: right;">22523</td>
+<td style="text-align: right;">6.690938</td>
+<td style="text-align: right;">12.289660</td>
+<td style="text-align: right;">23.60698</td>
+<td style="text-align: right;">25.84469</td>
+<td style="text-align: right;">15.27328</td>
+<td style="text-align: right;">7.885273</td>
+<td style="text-align: right;">8.409182</td>
+<td style="text-align: right;">5.395788</td>
+<td style="text-align: right;">5.288519</td>
+<td style="text-align: right;">59.323187</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">G0100030</td>
+<td style="text-align: left;">2019-2023</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: left;">Alabama</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">0500000US01003</td>
+<td style="text-align: right;">1003</td>
+<td style="text-align: left;">Baldwin County, Alabama</td>
+<td style="text-align: right;">43.7</td>
+<td style="text-align: right;">239945</td>
+<td style="text-align: right;">81.41324</td>
+<td style="text-align: right;">7.939736</td>
+<td style="text-align: right;">0.2533914</td>
+<td style="text-align: right;">0.9414658</td>
+<td style="text-align: right;">0.0325074</td>
+<td style="text-align: right;">0.4005084</td>
+<td style="text-align: right;">3.437454</td>
+<td style="text-align: right;">5.581696</td>
+<td style="text-align: right;">171988</td>
+<td style="text-align: right;">0.8268019</td>
+<td style="text-align: right;">1.2314813</td>
+<td style="text-align: right;">6.210317</td>
+<td style="text-align: right;">27.54204</td>
+<td style="text-align: right;">31.39173</td>
+<td style="text-align: right;">20.552597</td>
+<td style="text-align: right;">12.245040</td>
+<td style="text-align: right;">94642</td>
+<td style="text-align: right;">7.968978</td>
+<td style="text-align: right;">9.932165</td>
+<td style="text-align: right;">23.30361</td>
+<td style="text-align: right;">22.84926</td>
+<td style="text-align: right;">18.29949</td>
+<td style="text-align: right;">7.963695</td>
+<td style="text-align: right;">9.682805</td>
+<td style="text-align: right;">4.209862</td>
+<td style="text-align: right;">6.304837</td>
+<td style="text-align: right;">62.413545</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">G0100050</td>
+<td style="text-align: left;">2019-2023</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: left;">Alabama</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">0500000US01005</td>
+<td style="text-align: right;">1005</td>
+<td style="text-align: left;">Barbour County, Alabama</td>
+<td style="text-align: right;">40.7</td>
+<td style="text-align: right;">24757</td>
+<td style="text-align: right;">43.65230</td>
+<td style="text-align: right;">46.899867</td>
+<td style="text-align: right;">0.1373349</td>
+<td style="text-align: right;">0.5493396</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">1.2037000</td>
+<td style="text-align: right;">1.538959</td>
+<td style="text-align: right;">6.018500</td>
+<td style="text-align: right;">17628</td>
+<td style="text-align: right;">1.2139778</td>
+<td style="text-align: right;">5.7181756</td>
+<td style="text-align: right;">15.254141</td>
+<td style="text-align: right;">37.60495</td>
+<td style="text-align: right;">28.74404</td>
+<td style="text-align: right;">6.688223</td>
+<td style="text-align: right;">4.776492</td>
+<td style="text-align: right;">9080</td>
+<td style="text-align: right;">17.070485</td>
+<td style="text-align: right;">22.290749</td>
+<td style="text-align: right;">22.48899</td>
+<td style="text-align: right;">18.37004</td>
+<td style="text-align: right;">12.63216</td>
+<td style="text-align: right;">3.303965</td>
+<td style="text-align: right;">3.843612</td>
+<td style="text-align: right;">12.263279</td>
+<td style="text-align: right;">9.658199</td>
+<td style="text-align: right;">34.080006</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">G0100070</td>
+<td style="text-align: left;">2019-2023</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: left;">Alabama</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">0500000US01007</td>
+<td style="text-align: right;">1007</td>
+<td style="text-align: left;">Bibb County, Alabama</td>
+<td style="text-align: right;">41.3</td>
+<td style="text-align: right;">22152</td>
+<td style="text-align: right;">73.73149</td>
+<td style="text-align: right;">20.697905</td>
+<td style="text-align: right;">0.1083424</td>
+<td style="text-align: right;">0.2302275</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">0.0902853</td>
+<td style="text-align: right;">1.783135</td>
+<td style="text-align: right;">3.358613</td>
+<td style="text-align: right;">15931</td>
+<td style="text-align: right;">1.6885318</td>
+<td style="text-align: right;">4.8145126</td>
+<td style="text-align: right;">13.156738</td>
+<td style="text-align: right;">41.12736</td>
+<td style="text-align: right;">27.74465</td>
+<td style="text-align: right;">7.036595</td>
+<td style="text-align: right;">4.431611</td>
+<td style="text-align: right;">7571</td>
+<td style="text-align: right;">14.344208</td>
+<td style="text-align: right;">16.589618</td>
+<td style="text-align: right;">24.42214</td>
+<td style="text-align: right;">23.29943</td>
+<td style="text-align: right;">13.20829</td>
+<td style="text-align: right;">4.939902</td>
+<td style="text-align: right;">3.196407</td>
+<td style="text-align: right;">11.527530</td>
+<td style="text-align: right;">8.984055</td>
+<td style="text-align: right;">0.000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">G0100090</td>
+<td style="text-align: left;">2019-2023</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: left;">Alabama</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">0500000US01009</td>
+<td style="text-align: right;">1009</td>
+<td style="text-align: left;">Blount County, Alabama</td>
+<td style="text-align: right;">40.9</td>
+<td style="text-align: right;">59292</td>
+<td style="text-align: right;">84.95919</td>
+<td style="text-align: right;">1.259866</td>
+<td style="text-align: right;">0.1011941</td>
+<td style="text-align: right;">0.0860150</td>
+<td style="text-align: right;">0.1484180</td>
+<td style="text-align: right;">0.2260001</td>
+<td style="text-align: right;">3.164002</td>
+<td style="text-align: right;">10.055319</td>
+<td style="text-align: right;">40991</td>
+<td style="text-align: right;">2.3883291</td>
+<td style="text-align: right;">3.9496475</td>
+<td style="text-align: right;">10.965822</td>
+<td style="text-align: right;">35.61757</td>
+<td style="text-align: right;">31.49960</td>
+<td style="text-align: right;">9.972921</td>
+<td style="text-align: right;">5.606109</td>
+<td style="text-align: right;">21977</td>
+<td style="text-align: right;">11.502935</td>
+<td style="text-align: right;">13.718888</td>
+<td style="text-align: right;">24.00237</td>
+<td style="text-align: right;">22.26419</td>
+<td style="text-align: right;">16.28521</td>
+<td style="text-align: right;">6.716112</td>
+<td style="text-align: right;">5.510306</td>
+<td style="text-align: right;">5.178556</td>
+<td style="text-align: right;">8.916731</td>
+<td style="text-align: right;">9.510603</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">G0100110</td>
+<td style="text-align: left;">2019-2023</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: left;">Alabama</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">0500000US01011</td>
+<td style="text-align: right;">1011</td>
+<td style="text-align: left;">Bullock County, Alabama</td>
+<td style="text-align: right;">40.4</td>
+<td style="text-align: right;">10157</td>
+<td style="text-align: right;">21.09875</td>
+<td style="text-align: right;">71.221818</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">0.4627351</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">1.535887</td>
+<td style="text-align: right;">5.680811</td>
+<td style="text-align: right;">7378</td>
+<td style="text-align: right;">2.7243155</td>
+<td style="text-align: right;">6.7091353</td>
+<td style="text-align: right;">16.522093</td>
+<td style="text-align: right;">40.58010</td>
+<td style="text-align: right;">24.46462</td>
+<td style="text-align: right;">6.682028</td>
+<td style="text-align: right;">2.317701</td>
+<td style="text-align: right;">3453</td>
+<td style="text-align: right;">22.965537</td>
+<td style="text-align: right;">18.795251</td>
+<td style="text-align: right;">27.13582</td>
+<td style="text-align: right;">16.65219</td>
+<td style="text-align: right;">11.75789</td>
+<td style="text-align: right;">1.013611</td>
+<td style="text-align: right;">1.679699</td>
+<td style="text-align: right;">9.630116</td>
+<td style="text-align: right;">16.021011</td>
+<td style="text-align: right;">0.000000</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>The US Religion Census is an organization that tracks religious affiliation across the country. They perform an exhaustive census of every religious organization in the United States to get detailed affiliation data.</p>
 <p>There is an API available through OSF in order to download this data, but as of writing the first draft, it appears to be broken. I cannot seem to be able to create an OSF account currently. I do plan on using the API in my final project, but as of now we will just have to make do.</p>
@@ -252,7 +562,208 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>religion2020 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/religion2020.csv"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>religion2020[<span class="fu">is.na</span>(religion2020)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>religion2020 <span class="ot">&lt;-</span> religion2020 <span class="sc">|&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TOTJUDRATE_2020 =</span> CJUDRATE_2020 <span class="sc">+</span> IJUDRATE_2020 <span class="sc">+</span> OJUDRATE_2020 <span class="sc">+</span> RJUDRATE_2020 <span class="sc">+</span> RFRMRATE_2020, <span class="at">TOTBUDRATE_2020 =</span> MAHBUDRATE_2020 <span class="sc">+</span> THBUDRATE_2020 <span class="sc">+</span> VAJBUDRATE_2020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">TOTJUDRATE_2020 =</span> CJUDRATE_2020 <span class="sc">+</span> IJUDRATE_2020 <span class="sc">+</span> OJUDRATE_2020 <span class="sc">+</span> RJUDRATE_2020 <span class="sc">+</span> RFRMRATE_2020, <span class="at">TOTBUDRATE_2020 =</span> MAHBUDRATE_2020 <span class="sc">+</span> THBUDRATE_2020 <span class="sc">+</span> VAJBUDRATE_2020)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(religion2020))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 1%">
+<col style="width: 5%">
+<col style="width: 2%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">FIPS</th>
+<th style="text-align: left;">COUNAM</th>
+<th style="text-align: left;">STABBREV</th>
+<th style="text-align: right;">TOTRATE_2020</th>
+<th style="text-align: right;">EVANRATE_2020</th>
+<th style="text-align: right;">BPRTRATE_2020</th>
+<th style="text-align: right;">MPRTRATE_2020</th>
+<th style="text-align: right;">CATHRATE_2020</th>
+<th style="text-align: right;">ORTHRATE_2020</th>
+<th style="text-align: right;">LDSRATE_2020</th>
+<th style="text-align: right;">CJUDRATE_2020</th>
+<th style="text-align: right;">IJUDRATE_2020</th>
+<th style="text-align: right;">OJUDRATE_2020</th>
+<th style="text-align: right;">RJUDRATE_2020</th>
+<th style="text-align: right;">RFRMRATE_2020</th>
+<th style="text-align: right;">MSLMRATE_2020</th>
+<th style="text-align: right;">HINTRATE_2020</th>
+<th style="text-align: right;">MAHBUDRATE_2020</th>
+<th style="text-align: right;">THBUDRATE_2020</th>
+<th style="text-align: right;">VAJBUDRATE_2020</th>
+<th style="text-align: right;">TOTJUDRATE_2020</th>
+<th style="text-align: right;">TOTBUDRATE_2020</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">48301</td>
+<td style="text-align: left;">Loving County</td>
+<td style="text-align: left;">TX</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">15005</td>
+<td style="text-align: left;">Kalawao County</td>
+<td style="text-align: left;">HI</td>
+<td style="text-align: right;">43.90</td>
+<td style="text-align: right;">18.29</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">24.39</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">48269</td>
+<td style="text-align: left;">King County</td>
+<td style="text-align: left;">TX</td>
+<td style="text-align: right;">452.45</td>
+<td style="text-align: right;">452.45</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">48261</td>
+<td style="text-align: left;">Kenedy County</td>
+<td style="text-align: left;">TX</td>
+<td style="text-align: right;">63.14</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">63.14</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">31117</td>
+<td style="text-align: left;">McPherson County</td>
+<td style="text-align: left;">NE</td>
+<td style="text-align: right;">33.59</td>
+<td style="text-align: right;">11.53</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">22.06</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">31009</td>
+<td style="text-align: left;">Blaine County</td>
+<td style="text-align: left;">NE</td>
+<td style="text-align: right;">58.70</td>
+<td style="text-align: right;">48.49</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">10.21</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>I also process the religion data by taking NA adherence rate values and converting them to 0. In these cases, it means that there is a negligent amount of congregations of a given sect in a given county, and thus there are not a significant number of adherents.</p>
 <div class="cell">
@@ -266,7 +777,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="1152"></p>
 <figcaption>Plot of Evangelical Protestant Population</figcaption>
 </figure>
 </div>
@@ -277,7 +788,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="1152"></p>
 <figcaption>Plot of Mormon Population</figcaption>
 </figure>
 </div>
@@ -288,7 +799,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="1152"></p>
 <figcaption>Plot of Black Protestant Population</figcaption>
 </figure>
 </div>
